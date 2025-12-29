@@ -1,0 +1,43 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: Raw data loaded from CSV files
+    database: ecommerce
+    schema: bronze
+    tables:
+      - name: customers
+        description: Raw customer master data
+        columns:
+          - name: customer_id
+            description: Unique customer identifier
+            tests:
+              - unique
+              - not_null
+          - name: email
+            tests:
+              - not_null
+
+      - name: products
+        description: Raw product catalog
+        columns:
+          - name: product_id
+            tests:
+              - unique
+              - not_null
+
+      - name: orders
+        description: Raw order headers
+        columns:
+          - name: order_id
+            tests:
+              - unique
+              - not_null
+
+      - name: order_items
+        description: Raw order line items
+        columns:
+          - name: order_item_id
+            tests:
+              - unique
+              - not_null
