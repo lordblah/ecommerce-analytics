@@ -66,3 +66,17 @@ htmlcov/
 tmp/
 temp/
 *.tmp
+
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.env
+*.duckdb
+*.duckdb.wal
+.pytest_cache/
+target/
+dbt_packages/
+logs/

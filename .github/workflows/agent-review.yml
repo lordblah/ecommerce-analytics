@@ -1,0 +1,29 @@
+name: Agent Review
+on:
+  pull_request:
+    paths:
+      - 'models/**'
+      - 'dbt_project.yml'
+      - '*.py'
+
+jobs:
+  medallion-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # need HEAD~1 for diff
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install claude-agent-sdk duckdb anyio
+
+      - name: Run agent review
+        run: python src/ci_review.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CI_REVIEW_BUDGET: "1.00"
