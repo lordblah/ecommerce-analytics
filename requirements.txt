@@ -1,5 +1,5 @@
 ﻿# Core dependencies
-claude-agent-sdk>=0.2.111
+claude-agent-sdk>=0.1.0
 dagster==1.6.0
 dagster-webserver==1.6.0
 dagster-dbt==0.22.0

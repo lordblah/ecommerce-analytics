@@ -26,7 +26,7 @@ DEFAULT_DB_PATH = os.getenv("ECOMMERCE_DUCKDB_PATH", "ecommerce.duckdb")
         "metric validation, and ad-hoc analysis. The warehouse uses medallion "
         "architecture: bronze (raw), silver (cleaned), gold (business-ready)."
     ),
-    schema={"sql": str, "database_path": str},
+    input_schema={"sql": str, "database_path": str},
 )
 async def query_warehouse(args: dict) -> dict:
     import duckdb
@@ -67,7 +67,7 @@ async def query_warehouse(args: dict) -> dict:
         "List all tables and views in the ecommerce DuckDB warehouse, "
         "organized by schema. Shows table type and estimated row count."
     ),
-    schema={"database_path": str},
+    input_schema={"database_path": str},
 )
 async def list_tables(args: dict) -> dict:
     import duckdb
@@ -103,7 +103,7 @@ async def list_tables(args: dict) -> dict:
 @tool(
     name="describe_table",
     description="Show columns, types, and nullable status for a specific table.",
-    schema={"table_name": str, "database_path": str},
+    input_schema={"table_name": str, "database_path": str},
 )
 async def describe_table(args: dict) -> dict:
     import duckdb
@@ -132,7 +132,7 @@ async def describe_table(args: dict) -> dict:
         "duplicate primary key detection, row count, and freshness check on "
         "timestamp columns. Use to validate gold layer tables."
     ),
-    schema={"table_name": str, "primary_key": str, "database_path": str},
+    input_schema={"table_name": str, "primary_key": str, "database_path": str},
 )
 async def data_quality_check(args: dict) -> dict:
     import duckdb

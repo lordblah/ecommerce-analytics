@@ -22,6 +22,7 @@ import sys
 import time
 import anyio
 from claude_agent_sdk import query, ClaudeAgentOptions
+from claude_agent_sdk.types import AgentDefinition
 from tools.duckdb_tools import create_warehouse_server
 
 
@@ -29,14 +30,14 @@ from tools.duckdb_tools import create_warehouse_server
 # Agent definitions (inline — these override .claude/agents/ if same name)
 # ---------------------------------------------------------------------------
 
-AGENTS: dict[str, dict] = {
-    "medallion-reviewer": {
-        "description": (
+AGENTS: dict[str, AgentDefinition] = {
+    "medallion-reviewer": AgentDefinition(
+        description=(
             "Validates dbt models follow medallion architecture (bronze → silver → gold). "
             "Checks ref() chains, layer compliance, materialization strategy, naming "
             "conventions, and test coverage per layer. Catches cross-layer violations."
         ),
-        "prompt": (
+        prompt=(
             "You are a senior analytics engineer enforcing medallion architecture in a "
             "dbt + DuckDB project.\n\n"
             "RULES:\n"
@@ -52,15 +53,15 @@ AGENTS: dict[str, dict] = {
             "5. Read dbt_project.yml for materializations\n\n"
             "Output: structured report with 🔴 critical / 🟡 warning / 🟢 suggestion."
         ),
-        "tools": ["Read", "Grep", "Glob"],
-        "model": "sonnet",
-    },
-    "dagster-debugger": {
-        "description": (
+        tools=["Read", "Grep", "Glob"],
+        model="sonnet",
+    ),
+    "dagster-debugger": AgentDefinition(
+        description=(
             "Debugs Dagster pipeline issues — asset failures, dbt integration errors, "
             "DuckDB IO manager problems, resource configs, schedule issues."
         ),
-        "prompt": (
+        prompt=(
             "You debug a Dagster + dbt + DuckDB ecommerce pipeline on Windows.\n"
             "Key areas:\n"
             "- @dbt_assets config and manifest path\n"
@@ -70,16 +71,16 @@ AGENTS: dict[str, dict] = {
             "- dbt profiles.yml → DuckDB path alignment\n"
             "Trace symptom → root cause. Provide the specific fix."
         ),
-        "tools": ["Read", "Grep", "Glob", "Bash"],
-        "model": "sonnet",
-    },
-    "duckdb-analyst": {
-        "description": (
+        tools=["Read", "Grep", "Glob", "Bash"],
+        model="sonnet",
+    ),
+    "duckdb-analyst": AgentDefinition(
+        description=(
             "Queries the DuckDB ecommerce warehouse for data analysis. "
             "Validates metrics, checks data quality, explores schemas, "
             "and verifies gold layer table correctness."
         ),
-        "prompt": (
+        prompt=(
             "You are a data analyst with access to an ecommerce DuckDB warehouse "
             "using medallion architecture (bronze/silver/gold).\n\n"
             "WORKFLOW:\n"
@@ -89,21 +90,21 @@ AGENTS: dict[str, dict] = {
             "4. Write efficient analytical queries\n\n"
             "Summarize with specific numbers and business insights."
         ),
-        "tools": [
+        tools=[
             "mcp__warehouse__query_warehouse",
             "mcp__warehouse__list_tables",
             "mcp__warehouse__describe_table",
             "mcp__warehouse__data_quality_check",
         ],
-        "model": "sonnet",
-    },
-    "streamlit-reviewer": {
-        "description": (
+        model="sonnet",
+    ),
+    "streamlit-reviewer": AgentDefinition(
+        description=(
             "Reviews Streamlit dashboard code for the ecommerce project. "
             "Checks metric consistency with gold models, DuckDB connection patterns, "
             "caching, and UI quality."
         ),
-        "prompt": (
+        prompt=(
             "You review Streamlit dashboards on a DuckDB + dbt stack.\n"
             "Check:\n"
             "- Dashboards query gold tables only (not bronze/silver)\n"
@@ -113,22 +114,22 @@ AGENTS: dict[str, dict] = {
             "- Proper error handling for locked/missing DB files\n"
             "Keep feedback concise."
         ),
-        "tools": ["Read", "Grep", "Glob"],
-        "model": "haiku",
-    },
-    "code-reviewer": {
-        "description": (
+        tools=["Read", "Grep", "Glob"],
+        model="haiku",
+    ),
+    "code-reviewer": AgentDefinition(
+        description=(
             "General Python code review — types, security, error handling, "
             "Windows compatibility. Not for dbt SQL or Dagster-specific issues."
         ),
-        "prompt": (
+        prompt=(
             "Python code reviewer. Focus on type hints, error handling, security "
             "(hardcoded secrets, SQL injection), Windows path issues, unused imports. "
             "Prioritize bugs over style."
         ),
-        "tools": ["Read", "Grep", "Glob"],
-        "model": "haiku",
-    },
+        tools=["Read", "Grep", "Glob"],
+        model="haiku",
+    ),
 }
 
 
